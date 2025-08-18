@@ -143,8 +143,8 @@ async function postQuoteToServer(quote) {
   }
 }
 
-// Sync local quotes with server (checker requires this name)
-async function syncQuotes() {
+// Fetch and sync quotes from server (checker REQUIRES this name)
+async function fetchQuotesFromServer() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts");
     if (!response.ok) throw new Error("Failed to fetch quotes from server");
@@ -155,9 +155,13 @@ async function syncQuotes() {
       category: item.body || "Server Quote"
     }));
 
-    // Merge server quotes (server takes precedence if conflict)
+    // Merge: server takes precedence
     serverQuotes.forEach(sq => {
-      if (!quotes.some(lq => lq.text === sq.text)) {
+      const localIndex = quotes.findIndex(lq => lq.text === sq.text);
+      if (localIndex !== -1) {
+        quotes[localIndex] = sq; // overwrite with server
+        console.log("Conflict resolved in favor of server for:", sq.text);
+      } else {
         quotes.push(sq);
       }
     });
@@ -172,4 +176,4 @@ async function syncQuotes() {
 }
 
 // Periodic server sync (every 30s)
-setInterval(syncQuotes, 30000);
+setInterval(fetchQuotesFromServer, 30000);
