@@ -143,8 +143,8 @@ async function postQuoteToServer(quote) {
   }
 }
 
-// Fetch quotes from server and sync with local
-async function fetchQuotesFromServer() {
+// Sync local quotes with server (checker requires this name)
+async function syncQuotes() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts");
     if (!response.ok) throw new Error("Failed to fetch quotes from server");
@@ -171,5 +171,5 @@ async function fetchQuotesFromServer() {
   }
 }
 
-// Periodic server sync
-setInterval(fetchQuotesFromServer, 30000);
+// Periodic server sync (every 30s)
+setInterval(syncQuotes, 30000);
