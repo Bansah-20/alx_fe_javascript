@@ -177,3 +177,49 @@ async function fetchQuotesFromServer() {
 
 // Periodic server sync (every 30s)
 setInterval(fetchQuotesFromServer, 30000);
+
+// -------------------- Create Add Quote Form --------------------
+function createAddQuoteForm() {
+  const container = document.getElementById("formContainer");
+  if (!container) {
+    console.error("No #formContainer found in HTML to attach form");
+    return;
+  }
+
+  // Clear any existing content
+  container.innerHTML = "";
+
+  // Create form elements
+  const form = document.createElement("form");
+
+  const textInput = document.createElement("input");
+  textInput.type = "text";
+  textInput.id = "newQuoteText";
+  textInput.placeholder = "Enter new quote";
+
+  const categoryInput = document.createElement("input");
+  categoryInput.type = "text";
+  categoryInput.id = "newQuoteCategory";
+  categoryInput.placeholder = "Enter category";
+
+  const addButton = document.createElement("button");
+  addButton.type = "submit";
+  addButton.textContent = "Add Quote";
+
+  // Append elements to form
+  form.appendChild(textInput);
+  form.appendChild(categoryInput);
+  form.appendChild(addButton);
+
+  // Handle form submission
+  form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    addQuote();
+  });
+
+  // Append form to container
+  container.appendChild(form);
+}
+
+// Call it on load
+document.addEventListener("DOMContentLoaded", createAddQuoteForm);
