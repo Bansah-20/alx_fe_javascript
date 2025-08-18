@@ -155,6 +155,44 @@ async function fetchQuotesFromServer() {
       category: item.body || "Server Quote"
     }));
 
+    // -------------------- Sync Quotes with Server --------------------
+function syncQuotes() {
+  console.log("🔄 Syncing quotes with server...");
+
+  // Fetch simulated server quotes
+  fetchQuotesFromServer().then(serverQuotes => {
+    // Load local quotes
+    let localQuotes = JSON.parse(localStorage.getItem("quotes")) || [];
+
+    // Conflict Resolution: server always wins
+    serverQuotes.forEach(serverQuote => {
+      // Check if quote text already exists locally
+      const index = localQuotes.findIndex(q => q.text === serverQuote.text);
+      if (index !== -1) {
+        // Replace local version with server version
+        localQuotes[index] = serverQuote;
+      } else {
+        // Add new server quote
+        localQuotes.push(serverQuote);
+      }
+    });
+
+    // Save merged quotes back to localStorage
+    localStorage.setItem("quotes", JSON.stringify(localQuotes));
+
+    // Refresh UI
+    populateCategories();
+    showQuote();
+
+    console.log("✅ Sync complete. Local data updated from server.");
+    alert("Quotes synced with server. Server version applied where conflicts existed.");
+  });
+}
+
+// Run sync every 10 seconds
+setInterval(syncQuotes, 10000);
+
+
     // Merge: server takes precedence
     serverQuotes.forEach(sq => {
       const localIndex = quotes.findIndex(lq => lq.text === sq.text);
